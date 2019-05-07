@@ -437,29 +437,30 @@ function deckLoadedCallback(deck, position, numToDeal)
 	end
 end
 
-RootPath = 'D:\\Tuvorak\\Sheets\\'
+RootPath = 'https://github.com/SpaceTW/tuvorak/blob/master/Graphics/'
 
-MythicFrontPath = RootPath..'Mythics (6x2x11).png'
-MythicBackPath = RootPath..'Mythics Back (6x2x11).png'
+MythicFrontPath = RootPath..'Mythics%20(6x2x11).png?raw=true'
+MythicBackPath = RootPath..'Mythics%20Back%20(6x2x11).png?raw=true'
 MythicPosition = {-14, 0, 10}
 
-SpecialsFrontPath = RootPath..'Special Summons (8x7x54).png'
-SpecialsBackPath = RootPath..'Cards Back.jpg' --Need to fix this
+SpecialsFrontPath = RootPath..'Special%20Summons%20(8x7x54).png?raw=true'
+SpecialsBackPath = RootPath..'SpecialSummonsBack.png?raw=true'
 SpecialsPosition = {-14, 0, 6}
 
-QuestsFrontPath = RootPath..'Quests (7x4x26).png'
-QuestsBackPath = RootPath..'Quests Back.jpg'
+QuestsFrontPath = RootPath..'Quests%20(7x4x26).png?raw=true'
+QuestsBackPath = RootPath..'Quests%20Back.jpg?raw=true'
 QuestsPosition = {-14, 0, -6}
 
-RealmsFrontPath = RootPath..'Realms (6x3x17).png'
-RealmsBackPath = 'https://drive.google.com/file/d/1RDRXuNIfSyl-7ce3pBSKJZYbW_NSWEGV/view?usp=sharing'
+RealmsFrontPath = RootPath..'Realms%20(6x3x17).png?raw=true'
+RealmsBackPath = 'RealmsBack.jpg?raw=true'
 RealmsPosition = {-14, 0, -10}
 
-GosFrontPath = RootPath..'Go Cards-Front (9x5x40).png'
-GosBackPath = RootPath..'Go Cards-Back (9x5x40).png'
+GosFrontPath = RootPath..'Go%20Cards-Front%20(9x5x40).png?raw=true'
+GosBackPath = RootPath..'Go%20Cards-Back%20(9x5x40).png?raw=true'
 
-CardsLocalPaths = {'Cards1 (10x7x69).png', 'Cards2 (10x7x69).png', 'Cards3 (10x7x69).png', 'Cards4 (10x7x69).png', 'Cards5 (10x7x14).png'}
-CardsBack = RootPath..'Cards Back.jpg'
+CardsLocalPaths = {'Cards1%20(10x7x69).png?raw=true', 'Cards2%20(10x7x69).png?raw=true', 
+	'Cards3%20(10x7x69).png?raw=true', 'Cards4%20(10x7x69).png?raw=true', 'Cards5%20(10x7x14).png?raw=true'}
+CardsBack = RootPath..'Cards%20Back.jpg?raw=true'
 MainPosition = {0, 0, 0}
 
 function onChat(message)
