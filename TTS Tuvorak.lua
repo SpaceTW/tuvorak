@@ -439,8 +439,8 @@ end
 
 RootPath = 'https://github.com/SpaceTW/tuvorak/blob/master/Graphics/'
 
-MythicFrontPath = RootPath..'Mythics%20(6x2x11).png?raw=true'
-MythicBackPath = RootPath..'Mythics%20Back%20(6x2x11).png?raw=true'
+MythicFrontPath = RootPath..'Mythics%20(7x2x12).png?raw=true'
+MythicBackPath = RootPath..'Mythics%20Back%20(7x2x12).png?raw=true'
 MythicPosition = {-14, 0, 10}
 
 SpecialsFrontPath = RootPath..'Special%20Summons%20(8x7x54).png?raw=true'
@@ -449,7 +449,7 @@ SpecialsPosition = {-14, 0, 6}
 
 QuestsFrontPath = RootPath..'Quests%20(7x4x26).png?raw=true'
 QuestsBackPath = RootPath..'Quests%20Back.jpg?raw=true'
-QuestsPosition = {-14, 0, -6}
+QuestsPosition = {-14, 0, -6} 
 
 RealmsFrontPath = RootPath..'Realms%20(6x3x17).png?raw=true'
 RealmsBackPath = 'RealmsBack.jpg?raw=true'
@@ -459,7 +459,7 @@ GosFrontPath = RootPath..'Go%20Cards-Front%20(9x5x40).png?raw=true'
 GosBackPath = RootPath..'Go%20Cards-Back%20(9x5x40).png?raw=true'
 
 CardsLocalPaths = {'Cards1%20(10x7x69).png?raw=true', 'Cards2%20(10x7x69).png?raw=true', 
-	'Cards3%20(10x7x69).png?raw=true', 'Cards4%20(10x7x69).png?raw=true', 'Cards5%20(10x7x14).png?raw=true'}
+	'Cards3%20(10x7x69).png?raw=true', 'Cards4%20(10x7x69).png?raw=true', 'Cards5%20(10x7x15).png?raw=true'}
 CardsBack = RootPath..'Cards%20Back.jpg?raw=true'
 MainPosition = {0, 0, 0}
 
