@@ -389,6 +389,7 @@ do
         local cards = {}
         for k=1,cardNum do
             cards[#cards+1] = Decker.Card(asset, row, col)
+			cards[#cards].use_hands = true
             col = col+1
             if col > width then
                 row, col = row+1, 1
@@ -399,7 +400,50 @@ do
 end
 ---------End Decker---------------
 
-function loadDeck(faceLink, backLink)
+
+function mulitAssetDeck(rootPath, faceLinks, backLinks)
+	local cards = {}
+	for j=1,#faceLinks do
+		assetData = loadAsset(rootPath .. faceLinks[j], rootPath .. backLinks[j])
+		asset = assetData.asset
+		cardNum = assetData.numCards
+        
+		local row, col, width = 1, 1, asset.data.NumWidth
+        for k=1,cardNum do
+            cards[#cards+1] = Decker.Card(asset, row, col)
+			cards[#cards].use_hands = true
+            col = col+1
+            if col > width then
+                row, col = row+1, 1
+            end
+        end
+		
+		
+	end
+	return Decker.Deck(cards)
+	
+end
+
+
+function addButton(self)
+	params = {
+        click_function = "cutDeck",
+		owner = self,
+        label          = "Cut",
+        position       = {0, 0.5, 0},
+        --rotation       = {0, 0, 0},
+        width          = 800,
+        height         = 400,
+        --font_size      = 340,
+        --color          = {0.5, 0.5, 0.5},
+        --font_color     = {1, 1, 1},
+        tooltip        = "Get the top 15 cards of the deck",
+    }
+    self.createButton(params)
+	self.setPosition({MainPosition[1]+6, MainPosition[2], MainPosition[3]})
+end
+
+function loadAsset(faceLink, backLink)
 	local startIndex, endIndex = string.find(faceLink, '%(.-x')
 	--print(string.sub(faceLink, startIndex+1, endIndex-1))
 	local deckWidth = tonumber(string.sub(faceLink, startIndex+1, endIndex-1))
@@ -421,13 +465,19 @@ function loadDeck(faceLink, backLink)
 		backSheet = false
 	end
 	
+	print(faceLink .. ' ' .. tostring(backSheet))
 	
-	local asset=Decker.Asset(faceLink, backLink, {width=deckWidth, height=deckHeight, uniqueBack=backSheet})
-	
-	return Decker.AssetDeck(asset, numCards)
+	return {asset =  Decker.Asset(faceLink, backLink, {width=deckWidth, height=deckHeight, uniqueBack=backSheet}), numCards = numCards}
 end
 
-function deckLoadedCallback(deck, position, numToDeal)
+function loadDeck(faceLink, backLink)
+	local assetTable = loadAsset(faceLink, backLink)
+	
+	return Decker.AssetDeck(assetTable.asset, assetTable.numCards)
+end
+
+
+function deckLoadedCallback(deck, position, name, numToDeal)
 	-- Omit last argument for no deal
 	deck:flip()
 	deck:setPosition(position)
@@ -435,65 +485,92 @@ function deckLoadedCallback(deck, position, numToDeal)
 	if numToDeal then
 		deck:deal(numToDeal)
 	end
+	if name == 'Main Deck' then
+		spawnObject( {type = 'Chip_1000', callback_function = function(obj) addButton(obj) end})
+		--addButton(deck)
+	end
+	deck:setDescription(name)
+	deck.tooltip = true
 end
+
+
 
 RootPath = 'https://github.com/SpaceTW/tuvorak/blob/master/Graphics/'
 
 MythicFrontPath = RootPath..'Mythics%20(7x2x12).png?raw=true'
 MythicBackPath = RootPath..'Mythics%20Back%20(7x2x12).png?raw=true'
-MythicPosition = {-14, 0, 10}
+MythicPosition = {-30, 2, 10}
 
 SpecialsFrontPath = RootPath..'Special%20Summons%20(8x7x54).png?raw=true'
 SpecialsBackPath = RootPath..'SpecialSummonsBack.png?raw=true'
-SpecialsPosition = {-14, 0, 6}
+SpecialsPosition = {-30, 2, 6}
 
 QuestsFrontPath = RootPath..'Quests%20(7x4x26).png?raw=true'
 QuestsBackPath = RootPath..'Quests%20Back.jpg?raw=true'
-QuestsPosition = {-14, 0, -6} 
+QuestsPosition = {-30, 2, -6} 
 
 RealmsFrontPath = RootPath..'Realms%20(6x3x17).png?raw=true'
-RealmsBackPath = 'RealmsBack.jpg?raw=true'
-RealmsPosition = {-14, 0, -10}
+RealmsBackPath = RootPath..'RealmsBack.jpg?raw=true'
+RealmsPosition = {-30, 2, -10}
 
-GosFrontPath = RootPath..'Go%20Cards-Front%20(9x5x40).png?raw=true'
-GosBackPath = RootPath..'Go%20Cards-Back%20(9x5x40).png?raw=true'
+GosFrontPath = 'Go%20Cards-Front%20(9x5x40).png?raw=true'
+GosBackPath = 'Go%20Cards-Back%20(9x5x40).png?raw=true'
 
 CardsLocalPaths = {'Cards1%20(10x7x69).png?raw=true', 'Cards2%20(10x7x69).png?raw=true', 
-	'Cards3%20(10x7x69).png?raw=true', 'Cards4%20(10x7x69).png?raw=true', 'Cards5%20(10x7x15).png?raw=true'}
-CardsBack = RootPath..'Cards%20Back.jpg?raw=true'
-MainPosition = {0, 0, 0}
+	'Cards3%20(10x7x69).png?raw=true', 'Cards4%20(10x7x69).png?raw=true', 'Cards5%20(10x7x15).png?raw=true', 
+	GosFrontPath}
+CardsBackLocalPaths = {'Cards%20Back.jpg?raw=true', 'Cards%20Back.jpg?raw=true', 'Cards%20Back.jpg?raw=true', 
+	'Cards%20Back.jpg?raw=true', 'Cards%20Back.jpg?raw=true', GosBackPath}
+MainPosition = {-30, 2, -2}
+mainDeck = {}
+
+function onLoad()
+	local mythicDeckGen = loadDeck(MythicFrontPath, MythicBackPath)
+	mythicDeck = mythicDeckGen:spawn({position = MythicPosition, callback_function = function(obj) deckLoadedCallback(obj, MythicPosition, 'Mythic Deck') end})
+	
+	local specialsDeckGen = loadDeck(SpecialsFrontPath, SpecialsBackPath)
+	specialsDeck = specialsDeckGen:spawn({position = SpecialsPosition, callback_function = function(obj) 
+		deckLoadedCallback(obj, SpecialsPosition, 'Special Summons') end})
+
+	
+	local questDeckGen = loadDeck(QuestsFrontPath, QuestsBackPath)
+	questDeck = questDeckGen:spawn({position = QuestsPosition, callback_function = function(obj) deckLoadedCallback(obj, QuestsPosition, 'Quest Deck', 1) end})
+
+	
+	local realmDeckGen = loadDeck(RealmsFrontPath, RealmsBackPath)
+	realmDeck = realmDeckGen:spawn({position = RealmsPosition, callback_function = function(obj) deckLoadedCallback(obj, RealmsPosition, 'Realms Deck', 2) end})
+
+	
+	local mainDeckGen = nil
+	
+	
+	mainDeckGen = mulitAssetDeck(RootPath, CardsLocalPaths, CardsBackLocalPaths)
+
+	
+	mainDeck = mainDeckGen:spawn({position = MainPosition, callback_function = function(obj) deckLoadedCallback(obj, MainPosition, 'Main Deck') end})
+
+end
 
 function onChat(message)
-	if string.lower(message) == 'deal me in' then
-		local mythicDeckGen = loadDeck(MythicFrontPath, MythicBackPath)
-		mythicDeck = mythicDeckGen:spawn({position = MythicPosition, callback_function = function(obj) deckLoadedCallback(obj, MythicPosition) end})
-		
-		local specialsDeckGen = loadDeck(SpecialsFrontPath, SpecialsBackPath)
-		specialsDeck = specialsDeckGen:spawn({position = SpecialsPosition, callback_function = function(obj) 
-			deckLoadedCallback(obj, SpecialsPosition) end})
-
-		
-		local questDeckGen = loadDeck(QuestsFrontPath, QuestsBackPath)
-		questDeck = questDeckGen:spawn({position = QuestsPosition, callback_function = function(obj) deckLoadedCallback(obj, QuestsPosition, 1) end})
-
-		
-		local realmDeckGen = loadDeck(RealmsFrontPath, RealmsBackPath)
-		realmDeck = realmDeckGen:spawn({position = RealmsPosition, callback_function = function(obj) deckLoadedCallback(obj, RealmsPosition, 2) end})
-
-		
-		local mainDeckGen = nil
-		local mainDeck = nil
-		
-		for index=1,#CardsLocalPaths do 
-			mainDeckGen = loadDeck(RootPath..CardsLocalPaths[index], CardsBack)
-			mainDeck = mainDeckGen:spawn(
-				{position = MainPosition, guid = '1337dc', callback_function = function(obj) deckLoadedCallback(obj, MainPosition) end})
-		end
-
-		
-		mainDeckGen = loadDeck(GosFrontPath, GosBackPath)
-		mainDeck = mainDeckGen:spawn({position = MainPosition, callback_function = function(obj) deckLoadedCallback(obj, MainPosition) end})
+	if string.lower(message) == 'reset deck' then
+		onLoad()
 	end
-	
-	
+end
+
+
+function cutDeck2(self, color, alt)
+	print('Cutting')
+	mainDeck.cut(15)
+end
+
+function cutDeck(self, color, alt)
+	print('Cutting')
+
+	local objects = mainDeck.getObjects()
+	if #objects > 0 then
+		for j=1,15 do
+			mainDeck.takeObject({position = {MainPosition[1]+4, MainPosition[2], MainPosition[3]}})
+		end
+	end
+
 end
